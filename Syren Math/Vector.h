@@ -118,7 +118,7 @@ namespace SyrenMath {
 			mIsColumn = true;
 		}
 
-		/** Constructs a vector from another vector of a different arithmetic type.
+		/** Constructs the vector where the other vector is of a different arithmetic type.
 		 *
 		 * @details
 		 * This constructor allows implicit type conversion from `Vector<U, size>` to `Vector<T, size>`.
@@ -136,6 +136,24 @@ namespace SyrenMath {
 			mIsColumn = rhs.isColumnVector();
 		}
 
+		/** Copy constructor for the vector where the other vector is of a different arithmetic type.
+		 *
+		 * @details
+		 * This constructor allows implicit type conversion from `Vector<U, size>` to `Vector<T, size>`.
+		 * It ensures type safety by requiring `U` to be an arithmetic type and uses `std::transform`
+		 * to convert elements from `rhs` into the correct type `T`.
+		 *
+		 * @tparam U The type of elements in the source vector.
+		 * @param rhs The vector to copy elements from.
+		 */
+		template<typename U>
+		Vector(const Vector<U, size>& rhs) : mData(size, static_cast<T>(0)), mIsColumn(true) {
+			static_assert(std::is_arithmetic<U>::value, "Not an arithmetic type.");
+
+			std::transform(rhs.begin(), rhs.end(), this->begin(), [](U x) { return (T)x; });
+			mIsColumn = rhs.isColumnVector();
+		}
+
 		/** Copy constructor for the vector.
 		 *
 		 * @details
@@ -144,6 +162,15 @@ namespace SyrenMath {
 		 * @param rhs The vector to copy values from.
 		 */
 		Vector(const Vector<T, size>& rhs) : mData(rhs.mData), mIsColumn(rhs.mIsColumn) {}
+
+		/** Move constructor for the vector.
+		 *
+		 * @details
+		 * Moves the values from another vector of the same size into this vector.
+		 *
+		 * @param other The vector to move values from.
+		 */
+		Vector(Vector&& other) noexcept : mData(std::move(other.mData)), mIsColumn(other.mIsColumn) {}
 
 		/** Accesses an element of the vector by index. 
 		 *
@@ -171,6 +198,22 @@ namespace SyrenMath {
 			throw std::out_of_range("index out of range");
 		}
 
+		/** Move assignment operator for the vector.
+		 *
+		 * @details
+		 * Copies the values from another vector of the same size into this vector.
+		 *
+		 * @param rhs The vector to copy values from.
+		 * @return Reference to this vector after assignment.
+		 */
+		Vector& operator=(Vector&& other) noexcept {
+			if (this != &other) {
+				mData = std::move(other.mData);
+				mIsColumn = other.mIsColumn;
+			}
+			return *this;
+		}
+		
 		/** Assignment operator for the vector.
 		 *
 		 * @details
@@ -192,7 +235,9 @@ namespace SyrenMath {
 		constexpr bool isColumnVector() const { return mIsColumn; } /*!< Returns true if the vector is a column vector. */
 		auto length() { return mData.size() ; } /*!< Returns the number of elements in the vector. */
 		auto begin() { return mData.begin() ; } /*!< Returns an iterator to the beginning of the vector. */
+		auto begin() const { return mData.begin(); } /*!< Returns an iterator to the beginning of the vector (const). */
 		auto end() { return mData.end() ; } /*!< Returns an iterator to the end of the vector. */
+		auto end() const { return mData.end(); } /*!< Returns an iterator to the end of the vector (const). */
 	public:
 		/** Element-wise addition for two vectors of type __int64.
 		 * 
@@ -636,10 +681,10 @@ namespace SyrenMath {
 		 * @throws std::runtime_error If the vectors are not in the correct row-column multiplication format.
 		 */
 		float operator*(Vector<float, size> const& rhs) {
-			static_assert(std::is_same<T, float>::value, "Vector types do not match for float vector multiplication.");		
+			static_assert(std::is_same<T, float>::value, "Vector types do not match for float vector multiplication.");
 			if (this->isColumnVector() || !rhs.isColumnVector()) throw std::runtime_error("Only a row vector and a column vector can be multiplied.");
 
-			Vector<float, CMAXFLOAT> result(0);			
+			Vector<float, CMAXFLOAT> result(0);
 			const int aligendElements = size - size % CMAXFLOAT;
 
 			for (int i = 0; i < aligendElements; i += CMAXFLOAT) {
@@ -694,8 +739,119 @@ namespace SyrenMath {
 
 			return(Unroll64(LoadDouble(&result[0])));
 		}
+
+		/** Performs scalar multiplication of a vector by a scalar value.
+		 *
+		 * @details
+		 * This function multiplies each element in the vector by a given scalar and returns a new vector with the results.
+		 * It uses SIMD instructions for optimized performance.
+		 *
+		 * @tparam U The type of the scalar value. Must be a floating-point or integer type.
+		 * @param scalar The scalar value to multiply.
+		 * @return A new Vector<T, size> containing the elements of the original vector multiplied by the scalar.
+		 * @throws std::runtime_error If the scalar type is not compatible with the vector type.
+		 */
+		template <typename U, typename std::enable_if<
+			std::is_same<float, U>::value ||
+			std::is_same<__int32, U>::value ||
+			std::is_same<__int64, U>::value ||
+			std::is_same<double, U>::value, int>::type = 0>
+		Vector<T, size> operator*(const U scalar) {
+			static_assert(!((std::is_same<U, double>::value || std::is_same<U, __int64>::value) &&
+				(std::is_same<T, float>::value || std::is_same<T, __int32>::value)),
+				"Scalar multiplication is only defined when there is no potencial loss of data. Select a scalar with the same or fewer number of bits.");
+
+			if constexpr ((std::is_same<T, double>::value || std::is_same<T, __int64>::value)) {
+				Vector<double, size> scaled(0);
+				Vector<double, size> vec = *this;
+
+				const int aligendElements = size - size % CMAXDOUBLE;
+				const __m256d scalarToVec = BroadcastDouble(static_cast<double>(scalar));
+
+				for (int i = 0; i < aligendElements; i += CMAXDOUBLE) {
+					StoreDouble((__m256d*) & (scaled)[i],
+						MulDouble(LoadDouble(&vec[i]), scalarToVec)
+					);
+				}
+
+				auto mask = MaskBySize64<size % CMAXDOUBLE>();
+				StoreMaskDouble(&(scaled)[aligendElements], mask,
+					MulDouble(
+						LoadMaskDouble(&vec[aligendElements], mask),
+						scalarToVec
+					)
+				);
+				Vector<T, size> returnValue = scaled;
+				return returnValue;
+			}
+
+			else {
+				Vector<float, size> scaled(0);
+				Vector<float, size> vec = *this;
+
+				const int aligendElements = size - size % CMAXFLOAT;
+				const __m256 scalarToVec = BroadcastFloat(static_cast<float>(scalar));
+
+				for (int i = 0; i < aligendElements; i += CMAXFLOAT) {
+					StoreFloat(&(scaled)[i],
+						MulFloat(LoadFloat(&vec[i]), scalarToVec)
+					);
+				}
+
+				auto mask = MaskBySize32<size % CMAXFLOAT>();
+				StoreMaskFloat(&(scaled)[aligendElements], mask,
+					MulFloat(
+						LoadMaskFloat(&vec[aligendElements], mask),
+						scalarToVec
+					)
+				);
+				Vector<T, size> returnValue = scaled;
+				return returnValue;
+			}			
+		}
+		
+		template <typename U>
+		friend Vector<float, size> operator*(const U scalar, const Vector<T, size>& vec);
+
 	private:
 	};
+
+	/** Performs scalar multiplication of a vector by a scalar value.
+	 *
+	 * @details
+	 * This function multiplies each element in the vector by a given scalar from the left-hand side and returns a new vector with the results.
+	 *
+	 * @tparam T The type of the vector.
+	 * @tparam size The size of the vector.
+	 * @tparam U The type of the scalar value. Must be a floating-point or integer type.
+	 * @param scalar The scalar value to multiply.
+	 * @param vec The vector to be multiplied.
+	 * @return A new Vector<T, size> containing the elements of the original vector multiplied by the scalar.
+	 */
+	template<typename T, int size, 
+		typename U, typename std::enable_if<
+		std::is_same<float, U>::value ||
+		std::is_same<__int32, U>::value ||
+		std::is_same<__int64, U>::value ||
+		std::is_same<double, U>::value, int>::type = 0>
+	inline Vector<T, size> operator*(const U scalar, Vector<T, size>& vec) {
+		return vec.operator*(scalar);
+	}
+
+	/**
+	 * @brief Performs element-wise multiplication of a scalar value by a vector.
+	 *
+	 * @details
+	 * This function multiplies each element in the vector by a given scalar from the left-hand side and returns a new vector with the results.
+	 *
+	 * @param scalar The scalar value to multiply.
+	 * @param vec The vector to be multiplied.
+	 * @return A new vector with each element multiplied by the scalar.
+	 */
+	template<typename T, int size>
+	Vector<T, size> operator*(T scalar, const Vector<T, size>& vec) {
+		return vec * scalar; // Uses the previously defined operator*
+	}
 
 	/** Merges multiple vectors into a single output vector.
 	 * 

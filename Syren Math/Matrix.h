@@ -11,6 +11,6 @@
 namespace SyrenMath {
 	template<typename T, unsigned int m, unsigned int n>
 	class Matrix {
-		std::vector<Vector> mData;
+		std::vector<Vector<T, m>> mData;
 	};
 }

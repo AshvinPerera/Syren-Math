@@ -280,6 +280,26 @@ constexpr auto SubFloat(T1 pointer1, T2  pointer2) { return _mm256_sub_ps(pointe
 template<typename T1, typename T2>
 constexpr auto SubDouble(T1 pointer1, T2  pointer2) { return _mm256_sub_pd(pointer1, pointer2); }
 
+/** Multiplies two 256-bit float registers elementwise, where each element is a floating-point.
+ *
+ * @tparam T1 First register type (`__m256i`).
+ * @tparam T2 Second register type (`__m256i`).
+ * @param pointer1 First register.
+ * @param pointer2 Second register.
+ */
+template<typename T1, typename T2>
+constexpr auto MulFloat(T1 pointer1, T2  pointer2) { return _mm256_mul_ps(pointer1, pointer2); }
+
+/** Multiplies two 256-bit double registers elementwise, where each element is a double-precision floating-point.
+ *
+ * @tparam T1 First register type (`__m256i`).
+ * @tparam T2 Second register type (`__m256i`).
+ * @param pointer1 First register.
+ * @param pointer2 Second register.
+ */
+template<typename T1, typename T2>
+constexpr auto MulDouble(T1 pointer1, T2  pointer2) { return _mm256_mul_pd(pointer1, pointer2); }
+
 /** Performs fused multiply-add operation for 256-bit floating-point values.
  *
  * @param value1 First operand.
@@ -299,6 +319,60 @@ constexpr auto FMAFloat(T1 value1, T2  value2, T3 value3) { return _mm256_fmadd_
  */
 template<typename T1, typename T2, typename T3>
 constexpr auto FMADouble(T1 value1, T2  value2, T3 value3) { return _mm256_fmadd_pd(value1, value2, value3); }
+
+/** Broadcasts a 64-bit scalar value to all elements of a 256-bit integer register.
+ *
+ * @tparam T1 Scalar value type.
+ * @param value Scalar value to broadcast.
+ * @return A 256-bit integer register with all elements set to the scalar value.
+ */
+template<typename T1>
+constexpr auto BroadcastInt64(T1 value) { return _mm256_set1_epi64x(value); }
+
+/** Broadcasts a 32-bit scalar value to all elements of a 256-bit integer register.
+ *
+ * @tparam T1 Scalar value type.
+ * @param value Scalar value to broadcast.
+ * @return A 256-bit integer register with all elements set to the scalar value.
+ */
+template<typename T1>
+constexpr auto BroadcastInt32(T1 value) { return _mm256_set1_epi32(value); }
+
+/** Broadcasts a 16-bit scalar value to all elements of a 256-bit integer register.
+ *
+ * @tparam T1 Scalar value type.
+ * @param value Scalar value to broadcast.
+ * @return A 256-bit integer register with all elements set to the scalar value.
+ */
+template<typename T1>
+constexpr auto BroadcastInt16(T1 value) { return _mm256_set1_epi16(value); }
+
+/** Broadcasts an 8-bit scalar value to all elements of a 256-bit integer register.
+ *
+ * @tparam T1 Scalar value type.
+ * @param value Scalar value to broadcast.
+ * @return A 256-bit integer register with all elements set to the scalar value.
+ */
+template<typename T1>
+constexpr auto BroadcastInt8(T1 value) { return _mm256_set1_epi8(value); }
+
+/** Broadcasts a floating-point value to all elements of a 256-bit floating-point register.
+ *
+ * @tparam T1 Scalar value type.
+ * @param value Scalar value to broadcast.
+ * @return A 256-bit floating-point register with all elements set to the scalar value.
+ */
+template<typename T1>
+constexpr auto BroadcastFloat(T1 value) { return _mm256_set1_ps(value); }
+
+/** Broadcasts a double-precision value to all elements of a 256-bit double-precision floating-point register.
+ *
+ * @tparam T1 Scalar value type.
+ * @param value Scalar value to broadcast.
+ * @return A 256-bit double-precision floating-point register with all elements set to the scalar value.
+ */
+template<typename T1>
+constexpr auto BroadcastDouble(T1 value) { return _mm256_set1_pd(value); }
 
 /** Reduces a 256-bit floating-point register to a single float using horizontal addition.
  *
