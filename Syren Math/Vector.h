@@ -252,19 +252,19 @@ namespace SyrenMath {
 		Vector<__int64, size> operator+(Vector<__int64, size> const& rhs) {
 			static_assert(std::is_same<T, __int64>::value, "Vector types do not match for 64 bit addition.");
 			Vector<__int64, size> sum(0);
-			const int aligendElements = size - size % CMAXINT64;
+			const int alignedElements = size - size % CMAXINT64;
 
-			for (int i = 0; i < aligendElements; i += CMAXINT64) {
+			for (int i = 0; i < alignedElements; i += CMAXINT64) {
 				StoreInt((SIMDInt*) & (sum)[i],
 					AddInt64(LoadInt((SIMDInt*) & mData[i]), LoadInt((SIMDInt*) & rhs[i]))
 				);
 			}
 
 			auto mask = MaskBySize64<size % CMAXINT64>();
-			StoreMaskInt64(&(sum)[aligendElements], mask,
+			StoreMaskInt64(&(sum)[alignedElements], mask,
 				AddInt(
-					LoadMaskInt64(&mData[aligendElements], mask),
-					LoadMaskInt64(&rhs[aligendElements], mask)
+					LoadMaskInt64(&mData[alignedElements], mask),
+					LoadMaskInt64(&rhs[alignedElements], mask)
 				)
 			);
 
@@ -284,19 +284,19 @@ namespace SyrenMath {
 		Vector<__int32, size> operator+(Vector<__int32, size> const& rhs) {
 			static_assert(std::is_same<T, __int32>::value, "Vector types do not match for 32 bit addition.");
 			Vector<__int32, size> sum(0);
-			const int aligendElements = size - size % CMAXINT32;
+			const int alignedElements = size - size % CMAXINT32;
 
-			for (int i = 0; i < aligendElements; i += CMAXINT32) {
+			for (int i = 0; i < alignedElements; i += CMAXINT32) {
 				StoreInt((SIMDInt*) & (sum)[i],
 					AddInt32(LoadInt((SIMDInt*) & mData[i]), LoadInt((SIMDInt*) & rhs[i]))
 				);
 			}
 
 			auto mask = MaskBySize32<size % CMAXINT32>();
-			StoreMaskInt32(&(sum)[aligendElements], mask,
+			StoreMaskInt32(&(sum)[alignedElements], mask,
 				AddInt32(
-					LoadMaskInt32(&mData[aligendElements], mask),
-					LoadMaskInt32(&rhs[aligendElements], mask)
+					LoadMaskInt32(&mData[alignedElements], mask),
+					LoadMaskInt32(&rhs[alignedElements], mask)
 				)
 			);
 
@@ -316,16 +316,16 @@ namespace SyrenMath {
 		Vector<__int16, size> operator+(Vector<__int16, size> const& rhs) {
 			static_assert(std::is_same<T, __int16>::value, "Vector types do not match for 16 bit addition.");
 			Vector<__int16, size> sum(0);
-			const int aligendElements = size - size % CMAXINT16;
+			const int alignedElements = size - size % CMAXINT16;
 
-			for (int i = 0; i < aligendElements; i += CMAXINT16) {
+			for (int i = 0; i < alignedElements; i += CMAXINT16) {
 				StoreInt((SIMDInt*) & (sum)[i],
 					AddInt16(LoadInt((SIMDInt*) & mData[i]), LoadInt((SIMDInt*) & rhs[i]))
 				);
 			}
 
-			if (aligendElements != size) {
-				for (int i = aligendElements; i < size; ++i) {
+			if (alignedElements != size) {
+				for (int i = alignedElements; i < size; ++i) {
 					(sum)[i] = mData[i] + rhs[i];
 				}
 			}
@@ -346,16 +346,16 @@ namespace SyrenMath {
 		Vector<__int8, size> operator+(Vector<__int8, size> const& rhs) {
 			static_assert(std::is_same<T, __int8>::value, "Vector types do not match for 8 bit addition.");
 			Vector<__int8, size> sum(0);
-			const int aligendElements = size - size % CMAXINT8;
+			const int alignedElements = size - size % CMAXINT8;
 
-			for (int i = 0; i < aligendElements; i += CMAXINT8) {
+			for (int i = 0; i < alignedElements; i += CMAXINT8) {
 				StoreInt((SIMDInt*) & (sum)[i],
 					AddInt8(LoadInt((SIMDInt*) & mData[i]), LoadInt((SIMDInt*) & rhs[i]))
 				);
 			}
 
-			if (aligendElements != size) {
-				for (int i = aligendElements; i < size; ++i) {
+			if (alignedElements != size) {
+				for (int i = alignedElements; i < size; ++i) {
 					(sum)[i] = mData[i] + rhs[i];
 				}
 			}
@@ -376,19 +376,19 @@ namespace SyrenMath {
 		Vector<float, size> operator+(Vector<float, size> const& rhs) {
 			static_assert(std::is_same<T, float>::value, "Vector types do not match for float addition.");
 			Vector<float, size> sum(0);
-			const int aligendElements = size - size % CMAXFLOAT;
+			const int alignedElements = size - size % CMAXFLOAT;
 
-			for (int i = 0; i < aligendElements; i += CMAXFLOAT) {
+			for (int i = 0; i < alignedElements; i += CMAXFLOAT) {
 				StoreFloat(& (sum)[i],
 					AddFloat(LoadFloat(& mData[i]), LoadFloat(& rhs[i]))
 				);
 			}
 
 			auto mask = MaskBySize32<size % CMAXFLOAT>();
-			StoreMaskFloat(&(sum)[aligendElements], mask,
+			StoreMaskFloat(&(sum)[alignedElements], mask,
 				AddFloat(
-					LoadMaskFloat(&mData[aligendElements], mask),
-					LoadMaskFloat(&rhs[aligendElements], mask)
+					LoadMaskFloat(&mData[alignedElements], mask),
+					LoadMaskFloat(&rhs[alignedElements], mask)
 				)
 			);
 
@@ -408,19 +408,19 @@ namespace SyrenMath {
 		Vector<double, size> operator+(Vector<double, size> const& rhs) {
 			static_assert(std::is_same<T, double>::value, "Vector types do not match for double addition.");
 			Vector<double, size> sum(0);
-			const int aligendElements = size - size % CMAXDOUBLE;
+			const int alignedElements = size - size % CMAXDOUBLE;
 
-			for (int i = 0; i < aligendElements; i += CMAXDOUBLE) {
+			for (int i = 0; i < alignedElements; i += CMAXDOUBLE) {
 				StoreDouble(& (sum)[i],
 					AddDouble(LoadDouble(& mData[i]), LoadDouble(& rhs[i]))
 				);
 			}
 
 			auto mask = MaskBySize64<size % CMAXDOUBLE>();
-			StoreMaskDouble(&(sum)[aligendElements], mask,
+			StoreMaskDouble(&(sum)[alignedElements], mask,
 				AddDouble(
-					LoadMaskDouble(&mData[aligendElements], mask),
-					LoadMaskDouble(&rhs[aligendElements], mask)
+					LoadMaskDouble(&mData[alignedElements], mask),
+					LoadMaskDouble(&rhs[alignedElements], mask)
 				)
 			);
 
@@ -440,19 +440,19 @@ namespace SyrenMath {
 		Vector<__int64, size> operator-(Vector<__int64, size> const& rhs) {
 			static_assert(std::is_same<T, __int64>::value, "Vector types do not match for 64 bit subtraction.");
 			Vector<__int64, size> sum(0);
-			const int aligendElements = size - size % CMAXINT64;
+			const int alignedElements = size - size % CMAXINT64;
 
-			for (int i = 0; i < aligendElements; i += CMAXINT64) {
+			for (int i = 0; i < alignedElements; i += CMAXINT64) {
 				StoreInt((SIMDInt*) & (sum)[i],
 					SubInt64(LoadInt((SIMDInt*) & mData[i]), LoadInt((SIMDInt*) & rhs[i]))
 				);
 			}
 
 			auto mask = MaskBySize64<size % CMAXINT64>();
-			StoreMaskInt64(&(sum)[aligendElements], mask,
+			StoreMaskInt64(&(sum)[alignedElements], mask,
 				SubInt(
-					LoadMaskInt64(&mData[aligendElements], mask),
-					LoadMaskInt64(&rhs[aligendElements], mask)
+					LoadMaskInt64(&mData[alignedElements], mask),
+					LoadMaskInt64(&rhs[alignedElements], mask)
 				)
 			);
 
@@ -472,19 +472,19 @@ namespace SyrenMath {
 		Vector<__int32, size> operator-(Vector<__int32, size> const& rhs) {
 			static_assert(std::is_same<T, __int32>::value, "Vector types do not match for 32 bit subtraction.");
 			Vector<__int32, size> sum(0);
-			const int aligendElements = size - size % CMAXINT32;
+			const int alignedElements = size - size % CMAXINT32;
 
-			for (int i = 0; i < aligendElements; i += CMAXINT32) {
+			for (int i = 0; i < alignedElements; i += CMAXINT32) {
 				StoreInt((SIMDInt*) & (sum)[i],
 					SubInt32(LoadInt((SIMDInt*) & mData[i]), LoadInt((SIMDInt*) & rhs[i]))
 				);
 			}
 
 			auto mask = MaskBySize32<size % CMAXINT32>();
-			StoreMaskInt32(&(sum)[aligendElements], mask,
+			StoreMaskInt32(&(sum)[alignedElements], mask,
 				SubInt(
-					LoadMaskInt32(&mData[aligendElements], mask),
-					LoadMaskInt32(&rhs[aligendElements], mask)
+					LoadMaskInt32(&mData[alignedElements], mask),
+					LoadMaskInt32(&rhs[alignedElements], mask)
 				)
 			);
 
@@ -504,16 +504,16 @@ namespace SyrenMath {
 		Vector<__int16, size> operator-(Vector<__int16, size> const& rhs) {
 			static_assert(std::is_same<T, __int16>::value, "Vector types do not match for 16 bit subtraction.");
 			Vector<__int16, size> sum(0);
-			const int aligendElements = size - size % CMAXINT16;
+			const int alignedElements = size - size % CMAXINT16;
 
-			for (int i = 0; i < aligendElements; i += CMAXINT16) {
+			for (int i = 0; i < alignedElements; i += CMAXINT16) {
 				StoreInt((SIMDInt*) & (sum)[i],
 					SubInt16(LoadInt((SIMDInt*) & mData[i]), LoadInt((SIMDInt*) & rhs[i]))
 				);
 			}
 
-			if (aligendElements != size) {
-				for (int i = aligendElements; i < size; ++i) {
+			if (alignedElements != size) {
+				for (int i = alignedElements; i < size; ++i) {
 					(sum)[i] = mData[i] - rhs[i];
 				}
 			}
@@ -534,16 +534,16 @@ namespace SyrenMath {
 		Vector<__int8, size> operator-(Vector<__int8, size> const& rhs) {
 			static_assert(std::is_same<T, __int8>::value, "Vector types do not match for 8 bit subtraction.");
 			Vector<__int8, size> sum(0);
-			const int aligendElements = size - size % CMAXINT8;
+			const int alignedElements = size - size % CMAXINT8;
 
-			for (int i = 0; i < aligendElements; i += CMAXINT8) {
+			for (int i = 0; i < alignedElements; i += CMAXINT8) {
 				StoreInt((SIMDInt*) & (sum)[i],
 					SubInt8(LoadInt((SIMDInt*) & mData[i]), LoadInt((SIMDInt*) & rhs[i]))
 				);
 			}
 
-			if (aligendElements != size) {
-				for (int i = aligendElements; i < size; ++i) {
+			if (alignedElements != size) {
+				for (int i = alignedElements; i < size; ++i) {
 					(sum)[i] = mData[i] - rhs[i];
 				}
 			}
@@ -564,19 +564,19 @@ namespace SyrenMath {
 		Vector<float, size> operator-(Vector<float, size> const& rhs) {
 			static_assert(std::is_same<T, float>::value, "Vector types do not match for float subtraction.");
 			Vector<float, size> sum(0);
-			const int aligendElements = size - size % CMAXFLOAT;
+			const int alignedElements = size - size % CMAXFLOAT;
 
-			for (int i = 0; i < aligendElements; i += CMAXFLOAT) {
+			for (int i = 0; i < alignedElements; i += CMAXFLOAT) {
 				StoreFloat(&(sum)[i],
 					SubFloat(LoadFloat(&mData[i]), LoadFloat(&rhs[i]))
 				);
 			}
 
 			auto mask = MaskBySize32<size % CMAXFLOAT>();
-			StoreMaskFloat(&(sum)[aligendElements], mask,
+			StoreMaskFloat(&(sum)[alignedElements], mask,
 				SubFloat(
-					LoadMaskFloat(&mData[aligendElements], mask),
-					LoadMaskFloat(&rhs[aligendElements], mask)
+					LoadMaskFloat(&mData[alignedElements], mask),
+					LoadMaskFloat(&rhs[alignedElements], mask)
 				)
 			);
 
@@ -596,19 +596,19 @@ namespace SyrenMath {
 		Vector<double, size> operator-(Vector<double, size> const& rhs) {
 			static_assert(std::is_same<T, double>::value, "Vector types do not match for double subtraction.");
 			Vector<double, size> sum(0);
-			const int aligendElements = size - size % CMAXDOUBLE;
+			const int alignedElements = size - size % CMAXDOUBLE;
 
-			for (int i = 0; i < aligendElements; i += CMAXDOUBLE) {
+			for (int i = 0; i < alignedElements; i += CMAXDOUBLE) {
 				StoreDouble(&(sum)[i],
 					SubDouble(LoadDouble(&mData[i]), LoadDouble(&rhs[i]))
 				);
 			}
 
 			auto mask = MaskBySize64<size % CMAXDOUBLE>();
-			StoreMaskDouble(&(sum)[aligendElements], mask,
+			StoreMaskDouble(&(sum)[alignedElements], mask,
 				SubDouble(
-					LoadMaskDouble(&mData[aligendElements], mask),
-					LoadMaskDouble(&rhs[aligendElements], mask)
+					LoadMaskDouble(&mData[alignedElements], mask),
+					LoadMaskDouble(&rhs[alignedElements], mask)
 				)
 			);
 
@@ -685,9 +685,9 @@ namespace SyrenMath {
 			if (this->isColumnVector() || !rhs.isColumnVector()) throw std::runtime_error("Only a row vector and a column vector can be multiplied.");
 
 			Vector<float, CMAXFLOAT> result(0);
-			const int aligendElements = size - size % CMAXFLOAT;
+			const int alignedElements = size - size % CMAXFLOAT;
 
-			for (int i = 0; i < aligendElements; i += CMAXFLOAT) {
+			for (int i = 0; i < alignedElements; i += CMAXFLOAT) {
 				StoreFloat(&(result)[0],
 					FMAFloat(LoadFloat(&mData[i]), LoadFloat(&rhs[i]), LoadFloat(&result[0]))
 				);
@@ -696,8 +696,8 @@ namespace SyrenMath {
 			auto mask = MaskBySize32<size % CMAXFLOAT>();
 			StoreFloat(&(result)[0],
 				FMAFloat(
-					LoadMaskFloat(&mData[aligendElements], mask),
-					LoadMaskFloat(&rhs[aligendElements], mask),
+					LoadMaskFloat(&mData[alignedElements], mask),
+					LoadMaskFloat(&rhs[alignedElements], mask),
 					LoadFloat(&result[0])
 				)
 			);
@@ -720,9 +720,9 @@ namespace SyrenMath {
 			if (this->isColumnVector() || !rhs.isColumnVector()) throw std::runtime_error("Only a row vector and a column vector can be multiplied.");
 
 			Vector<double, CMAXDOUBLE> result(0);
-			const int aligendElements = size - size % CMAXDOUBLE;
+			const int alignedElements = size - size % CMAXDOUBLE;
 
-			for (int i = 0; i < aligendElements; i += CMAXDOUBLE) {
+			for (int i = 0; i < alignedElements; i += CMAXDOUBLE) {
 				StoreDouble(&(result)[0],
 					FMADouble(LoadDouble(&mData[i]), LoadDouble(&rhs[i]), LoadDouble(&result[0]))
 				);
@@ -731,8 +731,8 @@ namespace SyrenMath {
 			auto mask = MaskBySize64<size % CMAXDOUBLE>();
 			StoreDouble(&(result)[0],
 				FMADouble(
-					LoadMaskDouble(&mData[aligendElements], mask),
-					LoadMaskDouble(&rhs[aligendElements], mask),
+					LoadMaskDouble(&mData[alignedElements], mask),
+					LoadMaskDouble(&rhs[alignedElements], mask),
 					LoadDouble(&result[0])
 				)
 			);
@@ -765,19 +765,19 @@ namespace SyrenMath {
 				Vector<double, size> scaled(0);
 				Vector<double, size> vec = *this;
 
-				const int aligendElements = size - size % CMAXDOUBLE;
+				const int alignedElements = size - size % CMAXDOUBLE;
 				const SIMDDouble scalarToVec = BroadcastDouble(static_cast<double>(scalar));
 
-				for (int i = 0; i < aligendElements; i += CMAXDOUBLE) {
+				for (int i = 0; i < alignedElements; i += CMAXDOUBLE) {
 					StoreDouble((SIMDDouble*) & (scaled)[i],
 						MulDouble(LoadDouble(&vec[i]), scalarToVec)
 					);
 				}
 
 				auto mask = MaskBySize64<size % CMAXDOUBLE>();
-				StoreMaskDouble(&(scaled)[aligendElements], mask,
+				StoreMaskDouble(&(scaled)[alignedElements], mask,
 					MulDouble(
-						LoadMaskDouble(&vec[aligendElements], mask),
+						LoadMaskDouble(&vec[alignedElements], mask),
 						scalarToVec
 					)
 				);
@@ -789,19 +789,19 @@ namespace SyrenMath {
 				Vector<float, size> scaled(0);
 				Vector<float, size> vec = *this;
 
-				const int aligendElements = size - size % CMAXFLOAT;
+				const int alignedElements = size - size % CMAXFLOAT;
 				const SIMDFloat scalarToVec = BroadcastFloat(static_cast<float>(scalar));
 
-				for (int i = 0; i < aligendElements; i += CMAXFLOAT) {
+				for (int i = 0; i < alignedElements; i += CMAXFLOAT) {
 					StoreFloat(&(scaled)[i],
 						MulFloat(LoadFloat(&vec[i]), scalarToVec)
 					);
 				}
 
 				auto mask = MaskBySize32<size % CMAXFLOAT>();
-				StoreMaskFloat(&(scaled)[aligendElements], mask,
+				StoreMaskFloat(&(scaled)[alignedElements], mask,
 					MulFloat(
-						LoadMaskFloat(&vec[aligendElements], mask),
+						LoadMaskFloat(&vec[alignedElements], mask),
 						scalarToVec
 					)
 				);
