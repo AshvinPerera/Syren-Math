@@ -15,7 +15,7 @@ A hobby vector and matrix c++ math library (development in-progress) that incorp
 ## Installation
 1. Clone the repository: https://github.com/AshvinPerera/Syren-Math.git
 2. Add the "Syren Math" folder to the include path
-3. Define the appropriate preprocessor macro depending on SIMD support (e.g: USING_AVX2)
+3. Define the appropriate preprocessor macro to enable a specific SIMD instruction set (e.g: USING_AVX2)
 
 ## Usage
 To use the math library, include the relevent header file of the feature you would like to use. 
