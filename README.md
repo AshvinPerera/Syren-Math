@@ -1,5 +1,5 @@
 # Syren Math
-A hobby vector and matrix c++ math library (development in-progress) that incorporates SIMD instructions.
+A (hobby) vector and matrix c++ math library (development in-progress) that incorporates SIMD instructions.
 
 ## Table of Contents
 - [Installation](#installation)
