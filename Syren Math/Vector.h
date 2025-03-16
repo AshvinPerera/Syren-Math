@@ -68,6 +68,7 @@ namespace SyrenMath {
 	 * @tparam size The number of elements in the vector.
 	 */
 	template<typename T, unsigned int size>
+	// TODO: Add multithreading support for SIMD operations.
 	class Vector {
 	private:
 		static_assert(std::is_arithmetic<T>::value, "Not an arithmetic type.");		
