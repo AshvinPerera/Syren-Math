@@ -1,6 +1,5 @@
 #pragma once
 
-#define USING_AVX2
 #ifdef USING_AVX2
 #include "AVX2.h"
 #endif
