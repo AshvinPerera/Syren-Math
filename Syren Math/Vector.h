@@ -254,8 +254,8 @@ namespace SyrenMath {
 			const int aligendElements = size - size % CMAXINT64;
 
 			for (int i = 0; i < aligendElements; i += CMAXINT64) {
-				StoreInt((__m256i*) & (sum)[i],
-					AddInt64(LoadInt((__m256i*) & mData[i]), LoadInt((__m256i*) & rhs[i]))
+				StoreInt((SIMDInt*) & (sum)[i],
+					AddInt64(LoadInt((SIMDInt*) & mData[i]), LoadInt((SIMDInt*) & rhs[i]))
 				);
 			}
 
@@ -286,8 +286,8 @@ namespace SyrenMath {
 			const int aligendElements = size - size % CMAXINT32;
 
 			for (int i = 0; i < aligendElements; i += CMAXINT32) {
-				StoreInt((__m256i*) & (sum)[i],
-					AddInt32(LoadInt((__m256i*) & mData[i]), LoadInt((__m256i*) & rhs[i]))
+				StoreInt((SIMDInt*) & (sum)[i],
+					AddInt32(LoadInt((SIMDInt*) & mData[i]), LoadInt((SIMDInt*) & rhs[i]))
 				);
 			}
 
@@ -318,8 +318,8 @@ namespace SyrenMath {
 			const int aligendElements = size - size % CMAXINT16;
 
 			for (int i = 0; i < aligendElements; i += CMAXINT16) {
-				StoreInt((__m256i*) & (sum)[i],
-					AddInt16(LoadInt((__m256i*) & mData[i]), LoadInt((__m256i*) & rhs[i]))
+				StoreInt((SIMDInt*) & (sum)[i],
+					AddInt16(LoadInt((SIMDInt*) & mData[i]), LoadInt((SIMDInt*) & rhs[i]))
 				);
 			}
 
@@ -348,8 +348,8 @@ namespace SyrenMath {
 			const int aligendElements = size - size % CMAXINT8;
 
 			for (int i = 0; i < aligendElements; i += CMAXINT8) {
-				StoreInt((__m256i*) & (sum)[i],
-					AddInt8(LoadInt((__m256i*) & mData[i]), LoadInt((__m256i*) & rhs[i]))
+				StoreInt((SIMDInt*) & (sum)[i],
+					AddInt8(LoadInt((SIMDInt*) & mData[i]), LoadInt((SIMDInt*) & rhs[i]))
 				);
 			}
 
@@ -442,8 +442,8 @@ namespace SyrenMath {
 			const int aligendElements = size - size % CMAXINT64;
 
 			for (int i = 0; i < aligendElements; i += CMAXINT64) {
-				StoreInt((__m256i*) & (sum)[i],
-					SubInt64(LoadInt((__m256i*) & mData[i]), LoadInt((__m256i*) & rhs[i]))
+				StoreInt((SIMDInt*) & (sum)[i],
+					SubInt64(LoadInt((SIMDInt*) & mData[i]), LoadInt((SIMDInt*) & rhs[i]))
 				);
 			}
 
@@ -474,8 +474,8 @@ namespace SyrenMath {
 			const int aligendElements = size - size % CMAXINT32;
 
 			for (int i = 0; i < aligendElements; i += CMAXINT32) {
-				StoreInt((__m256i*) & (sum)[i],
-					SubInt32(LoadInt((__m256i*) & mData[i]), LoadInt((__m256i*) & rhs[i]))
+				StoreInt((SIMDInt*) & (sum)[i],
+					SubInt32(LoadInt((SIMDInt*) & mData[i]), LoadInt((SIMDInt*) & rhs[i]))
 				);
 			}
 
@@ -506,8 +506,8 @@ namespace SyrenMath {
 			const int aligendElements = size - size % CMAXINT16;
 
 			for (int i = 0; i < aligendElements; i += CMAXINT16) {
-				StoreInt((__m256i*) & (sum)[i],
-					SubInt16(LoadInt((__m256i*) & mData[i]), LoadInt((__m256i*) & rhs[i]))
+				StoreInt((SIMDInt*) & (sum)[i],
+					SubInt16(LoadInt((SIMDInt*) & mData[i]), LoadInt((SIMDInt*) & rhs[i]))
 				);
 			}
 
@@ -536,8 +536,8 @@ namespace SyrenMath {
 			const int aligendElements = size - size % CMAXINT8;
 
 			for (int i = 0; i < aligendElements; i += CMAXINT8) {
-				StoreInt((__m256i*) & (sum)[i],
-					SubInt8(LoadInt((__m256i*) & mData[i]), LoadInt((__m256i*) & rhs[i]))
+				StoreInt((SIMDInt*) & (sum)[i],
+					SubInt8(LoadInt((SIMDInt*) & mData[i]), LoadInt((SIMDInt*) & rhs[i]))
 				);
 			}
 
@@ -765,10 +765,10 @@ namespace SyrenMath {
 				Vector<double, size> vec = *this;
 
 				const int aligendElements = size - size % CMAXDOUBLE;
-				const __m256d scalarToVec = BroadcastDouble(static_cast<double>(scalar));
+				const SIMDDouble scalarToVec = BroadcastDouble(static_cast<double>(scalar));
 
 				for (int i = 0; i < aligendElements; i += CMAXDOUBLE) {
-					StoreDouble((__m256d*) & (scaled)[i],
+					StoreDouble((SIMDDouble*) & (scaled)[i],
 						MulDouble(LoadDouble(&vec[i]), scalarToVec)
 					);
 				}
@@ -789,7 +789,7 @@ namespace SyrenMath {
 				Vector<float, size> vec = *this;
 
 				const int aligendElements = size - size % CMAXFLOAT;
-				const __m256 scalarToVec = BroadcastFloat(static_cast<float>(scalar));
+				const SIMDFloat scalarToVec = BroadcastFloat(static_cast<float>(scalar));
 
 				for (int i = 0; i < aligendElements; i += CMAXFLOAT) {
 					StoreFloat(&(scaled)[i],
