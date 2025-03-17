@@ -31,8 +31,8 @@ Note: all library definitions exist inside the SyrenMath namespace
     SyrenMath::Vector<__int32, 102> x(1);
     SyrenMath::Vector<__int32, 102> y(2);
     
-    SyrenMath::Vector<__int32, 102> z = Vec1 + Vec2;
-    SyrenMath::Vector<__int64, 102> w = Vec1;
+    SyrenMath::Vector<__int32, 102> z = x + y;
+    SyrenMath::Vector<__int64, 102> w = x;
 
     __int64 dotProduct = w.t() * w
 ```
